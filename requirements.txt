@@ -1,0 +1,32 @@
+Django==4.2
+django-widget-tweaks==1.4.12
+pymysql
+tailwind
+openpyxl
+python-dateutil
+mysqlclient
+environ
+django_otp
+
+# Example app
+
+django-debug-toolbar
+django-bootstrap-form
+django-user-sessions
+
+# Documentation
+
+Sphinx
+sphinx_rtd_theme
+
+# Build
+
+wheel
+twine
+django-two-factor-auth
+phonenumbers
+twilio
+Pillow
+
+djangorestframework>=3.14
+requests>=2.31

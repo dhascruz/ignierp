@@ -1,0 +1,37 @@
+<VirtualHost *:80>
+    ServerName my.igniteict.com
+
+    # Redirect all HTTP to HTTPS
+    RewriteEngine On
+    RewriteCond %{HTTPS} off
+    RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+</VirtualHost>
+
+<VirtualHost *:443>
+    ServerName my.igniteict.com
+
+    # SSL certs (Let’s Encrypt example)
+    SSLEngine on
+    SSLCertificateFile /etc/letsencrypt/live/my.igniteict.com/fullchain.pem
+    SSLCertificateKeyFile /etc/letsencrypt/live/my.igniteict.com/privkey.pem
+
+    # Proxy to Gunicorn socket
+    ProxyPass / unix:/home/dhas/django/ignierp/ignierp.sock|http://localhost/
+    ProxyPassReverse / unix:/home/dhas/django/ignierp/igniepr.sock|http://localhost/
+
+    # Static files
+    Alias /static/ /home/dhas/django/ignierp/static/
+    <Directory /home/dhas/django/ignierp/static/>
+        Require all granted
+    </Directory>
+
+    Alias /media/ /home/dhas/django/ignierp/media/
+    <Directory /home/dhas/django/ignierp/media/>
+        Require all granted
+    </Directory>
+
+    # Security headers (recommended)
+    Header always set X-Content-Type-Options "nosniff"
+    Header always set X-Frame-Options "SAMEORIGIN"
+    Header always set X-XSS-Protection "1; mode=block"
+</VirtualHost>
