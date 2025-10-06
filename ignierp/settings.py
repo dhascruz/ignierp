@@ -108,6 +108,8 @@ MOODLE_WS_TOKEN = "f7b2275d40d76bc3478eae17a791026f"
 CSRF_TRUSTED_ORIGINS = [
     "https://my.igniteict.com",
     "https://www.my.igniteict.com",
+    "https://my.alpho.net",
+    "https://www.my.alpho.net",
     "https://210.18.177.188",
 ]
 
