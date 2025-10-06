@@ -1,4 +1,5 @@
 from django.db import models
+
 from django.contrib.auth.models import User
 
 class TeacherProfile(models.Model):
@@ -22,3 +23,6 @@ class TeacherMoodleUser(models.Model):
         managed = False  # Django will not create/alter this table
         db_table = "mdl_user"
         app_label = "teachers"
+
+
+       

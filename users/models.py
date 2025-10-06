@@ -1,4 +1,5 @@
 from django.db import models
+from django.utils import timezone
 
 class MoodleUser(models.Model):
     id = models.BigAutoField(primary_key=True)
@@ -41,3 +42,14 @@ class MoodleRoleAssignment(models.Model):
     class Meta:
         managed = False
         db_table = "mdl_role_assignments"
+
+
+
+class CourseBackup(models.Model):
+    course_id = models.IntegerField()
+    file_path = models.CharField(max_length=500)
+    status = models.CharField(max_length=50, default="pending")  # pending, success, failed
+    created_at = models.DateTimeField(default=timezone.now)
+
+    def __str__(self):
+        return f"Course {self.course_id} -> {self.file_path}"    

@@ -1,5 +1,6 @@
 from passlib.hash import phpass, bcrypt, sha512_crypt, md5_crypt
 
+
 def check_moodle_password(password, hash_from_db):
     """
     Verify Moodle password against multiple possible hash types.
@@ -18,3 +19,6 @@ def check_moodle_password(password, hash_from_db):
         return md5_crypt.verify(password, hash_from_db)
     else:
         raise ValueError(f"Unknown hash format: {hash_from_db}")
+    
+
+

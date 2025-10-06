@@ -3,6 +3,8 @@ from io import BytesIO
 from base64 import b64encode
 from django_otp.plugins.otp_totp.models import TOTPDevice
 
+
+
 def generate_totp_qr_code(user):
     """
     Generates a TOTP QR code for the user, to be scanned by an authenticator app.
@@ -21,3 +23,5 @@ def generate_totp_qr_code(user):
     # Convert the QR code to base64 so it can be rendered in HTML
     qr_code_base64 = b64encode(stream.getvalue()).decode()
     return qr_code_base64
+
+

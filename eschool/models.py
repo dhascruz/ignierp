@@ -5,6 +5,7 @@ from django.db.models import F
 from django_otp.plugins.otp_totp.models import TOTPDevice
 
 
+
 class School(models.Model):
     name = models.CharField(max_length=200)
     address = models.TextField()
@@ -13,6 +14,7 @@ class School(models.Model):
 
     def __str__(self):
         return self.name
+     
 
         
 class AccountingAccounts(models.Model):

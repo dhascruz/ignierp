@@ -41,7 +41,7 @@ from .forms import RegisterForm
 logger = logging.getLogger(__name__)
 
 def redirect_to_login(request):
-    return redirect('login')
+    return redirect('erp/login')
 
 
 ### code start eschool
@@ -900,8 +900,6 @@ def farmer_delete_contact(request, pk):
         contact.delete()
         return redirect('contact_list')
     return render(request, 'farmer/contact_confirm_delete.html', {'contact': contact,'user_id': user_id})
-
-
 
 
 

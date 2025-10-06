@@ -32,11 +32,11 @@ from two_factor.urls import urlpatterns as tf_urls
 urlpatterns = [
  #   path('admin/', admin.site.urls),
     path('', include('eschool.urls')),
-    path('i18n/', include('django.conf.urls.i18n')),
+    # path('i18n/', include('django.conf.urls.i18n')),
 
-    path('', include(tf_urls)),
-     path('', include(tf_twilio_urls)),
-     path('', include('user_sessions.urls', 'user_sessions')),
+    # path('', include(tf_urls)),
+    #  path('', include(tf_twilio_urls)),
+    #  path('', include('user_sessions.urls', 'user_sessions')),
      path('admin/', admin.site.urls),
     path("api/", include("users.urls")),
     path("users/", include("users.web_urls")), # only HTML route
@@ -48,9 +48,9 @@ urlpatterns = [
 ]
 
 # Add internationalization URL patterns
-urlpatterns += i18n_patterns(
-    path('', include('eschool.urls')),
-)
+# urlpatterns += i18n_patterns(
+#     path('', include('eschool.urls')),
+# )
 
 
 

@@ -10,6 +10,8 @@ from .serializers import MoodleUserSerializer
 from django.db.models import F
 from django.db.models import Q
 from .models import  *
+#from .utils import moodle_user
+from users.utils import run_course_backup
 from .services import get_users_with_roles
 
 
@@ -155,3 +157,20 @@ def enrolled_users(request, course_id):
         users_page = paginator.page(paginator.num_pages)
 
     return render(request, "enrolled_users.html", {"enrolled_users": users_page})
+
+
+def trigger_backup(request, course_id):
+    #destination = "/home/u875591253/backup/"
+    destination = "/home/dhas/backup/"
+
+    output = run_course_backup(course_id, destination)
+
+    print(output)
+    # Show latest backups
+    backups = CourseBackup.objects.filter(course_id=course_id).order_by("-created_at")
+
+    return render(request, "backup_result.html", {
+        "course_id": course_id,
+        "output": output,
+        "backups": backups
+    })    

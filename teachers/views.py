@@ -16,8 +16,10 @@ from django.contrib import messages
 from .moodle_client import get_moodle_token, get_moodle_user_info, get_moodle_courses
 
 from teachers.services import get_teacher_courses, get_teacher_courses_with_student_count, get_students_for_course
-from .models import TeacherMoodleUser
+from .models import TeacherMoodleUser   
+from users.models import CourseBackup
 
+from django.conf import settings
 
 
 
@@ -32,7 +34,7 @@ def login_view(request):
         username = request.POST.get("username")
         password = request.POST.get("password")
 
-        print(username, password)
+
 
         try:
             user = TeacherMoodleUser.objects.using("moodle").get(username=username)
@@ -122,3 +124,6 @@ def course_students_view(request, course_id):
         "students": students_page,
         "course_id": course_id
     })
+
+
+
