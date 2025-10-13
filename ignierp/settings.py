@@ -97,6 +97,10 @@ INSTALLED_APPS = [
     'eschool',
     'users',
     'teachers',
+    'ckeditor',
+    'ckeditor_uploader',
+    'taggit',  # optional if you want image uploads
+    'blog',
 ]
 
 
@@ -286,5 +290,15 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 #MEDIA_URL = '/media/'
 MEDIA_URL = '/erp/media/'
+CKEDITOR_UPLOAD_PATH = "uploads/"
+
+CKEDITOR_CONFIGS = {
+    'default': {
+        'toolbar': 'full',
+        'height': 400,
+        'width': '100%',
+    },
+}
+
 
 

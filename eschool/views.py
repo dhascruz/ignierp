@@ -14,6 +14,9 @@ from django.conf import settings
 from django.shortcuts import redirect, resolve_url
 from django.utils.decorators import method_decorator
 from django.views.decorators.cache import never_cache
+from blog.models import BlogPost    
+from blog.forms  import BlogPostForm
+
 
 #from django.views.generic import FormView, TemplateView
 
@@ -438,140 +441,8 @@ def my_contacts(request):
 
 
 
-# def product_list(request):
-#     products = AgriculturalProduct.objects.filter(user=request.user)
-#     return render(request, 'farmer/products.html', {'products': products})
-
-# def product_create(request):
-#     if request.method == 'POST':
-#         form = AgriculturalProductForm(request.POST)
-#         if form.is_valid():
-#             product = form.save(commit=False)
-#             product.user = request.user
-#             product.save()
-#             return redirect('product_list')
-#     else:
-#         form = AgriculturalProductForm()
-#     return render(request, 'farmer/products_form.html', {'form': form})
-
-# def product_update(request, pk):
-#     product = get_object_or_404(AgriculturalProduct, pk=pk, user=request.user)
-#     if request.method == 'POST':
-#         form = AgriculturalProductForm(request.POST, instance=product)
-#         if form.is_valid():
-#             form.save()
-#             return redirect('product_list')
-#     else:
-#         form = AgriculturalProductForm(instance=product)
-#     return render(request, 'farmer/products_form.html', {'form': form})
-
-# def product_delete(request, pk):
-#     product = get_object_or_404(AgriculturalProduct, pk=pk, user=request.user)
-#     if request.method == 'POST':
-#         product.delete()
-#         return redirect('product_list')
-#     return render(request, 'farmer/products_confirm_delete.html', {'product': product})
 
 
-@login_required
-@user_passes_test(farmer_check)
-def add_category(request):
-    if request.method == 'POST':
-        form = CategoryForm(request.POST, request.FILES)
-        if form.is_valid():
-            form.save()
-            return redirect('add_agri_product')
-    else:
-        form = CategoryForm()
-
-    return render(request, 'category_form.html', {'form': form})
-
-@login_required
-@user_passes_test(farmer_check)
-def add_agri_product(request):
-    user_id = request.user.id
-    if request.method == 'POST':
-        form = AgriProductForm(request.POST, request.FILES)
-        if form.is_valid():
-            
-            try:
-                agri_product = form.save(commit=False)
-                agri_product.user = request.user
-                agri_product.save()
-                #form.save( )
-                return redirect('agri_product_list')
-            except Exception as e:
-                # Handle any errors that occur during saving
-                return render(request, 'farmer/agri_product_form.html', {
-                    'form': form,
-                    'error_message': f'An error occurred: {str(e)}'
-                })
-            
-    else:
-        form = AgriProductForm()
-
-    return render(request, 'farmer/agri_product_form.html', {'form': form,'user_id': user_id})
-
-
-
-def agri_product_update(request, pk):
-    user_id = request.user.id
-    product = get_object_or_404(AgriProduct, pk=pk, user=request.user)
-    if request.method == 'POST':
-        form = AgriProductForm(request.POST, instance=product)
-        if form.is_valid():
-            form.save()
-            return redirect('agri_product_list')
-    else:
-        form = AgriProductForm(instance=product)
-    return render(request, 'farmer/agri_product_form.html', {'form': form,'user_id': user_id})
-
-
-def agri_product_delete(request, pk):
-    user_id = request.user.id
-    product = get_object_or_404(AgriProduct, pk=pk, user=request.user)
-    if request.method == 'POST':
-        product.delete()
-        return redirect('agri_product_list')
-    return render(request, 'farmer/agri_product_delete.html', {'product': product,'user_id': user_id})
-
-
-
-
-@login_required
-@user_passes_test(farmer_check)
-def agri_product_list(request):
-    #agri_products = AgriProduct.objects.filter(user=request.user)
-    agri_products=get_all_products_with_category_images()
-    #cat_image= get_category_image_url(3)
-    user_id = request.user.id
-
-
-    return render(request, 'farmer/agri_product_list.html', {'agri_products': agri_products,'user_id': user_id})
-
-
-
-def get_all_products_with_category_images():
-    # Query all products and annotate with the category image URL
-    products = AgriProduct.objects.all().select_related('category').annotate(
-        category_image_url=F('image')
-    )
-
-    # Create a list to store products with their corresponding category image URLs
-    product_list = [
-        {
-            'id': product.id,
-            'crop_name': product.crop_name,
-            'actual_production': product.actual_production,
-            'project_production': product.project_production,
-            'cost_per_unit': product.cost_per_unit,
-            'project_cost_per_unit': product.project_cost_per_unit,
-            'category_image_url': get_category_image_url(product.category_id)
-        }
-        for product in products
-    ]
-
-    return product_list
 
 
 
@@ -638,50 +509,6 @@ def category_delete(request, id):
 
 
 
-###category admin start
-@login_required
-
-def farmer_list(request):
-    
-    farmer_users = CustomUser.objects.filter(role='farmer')
-    return render(request, 'farmer_list.html', {'farmer_users': farmer_users})
-
-@login_required
-@user_passes_test(farmer_check)
-def Farmer_create(request):
-    if request.method == 'POST':
-        form = FarmerDetail(request.POST, request.FILES)
-        if form.is_valid():
-            form.save()
-            return redirect('Farmer_list')
-    else:
-        form = FarmerDetailForm()
-    return render(request, 'farmer/Farmer_form.html', {'form': form})
-
-# def Farmer_edit(request, id):
-#     Farmer = get_object_or_404(Farmer, id=id)
-#     if request.method == 'POST':
-#         form = FarmerForm(request.POST, request.FILES, instance=Farmer)
-#         if form.is_valid():
-#             form.save()
-#             return redirect('Farmer_list')
-#     else:
-#         form = FarmerForm(instance=Farmer)
-#     return render(request, 'products/Farmer_form.html', {'form': form})
-
-# def Farmer_delete(request, id):
-#     Farmer = get_object_or_404(Farmer, id=id)
-#     if request.method == 'POST':
-#         Farmer.delete()
-#         return redirect('Farmer_list')
-#     return render(request, 'products/Farmer_confirm_delete.html', {'Farmer': Farmer})
-
-
-###category admin end
-
-
-
-
 
 ###farmer profile list start
 
@@ -690,71 +517,7 @@ def farmer_profile_list(request):
     #return render(request, 'farmer_profile_list.html', {'farmers': farmers})
     return render(request, 'farmer_profile_list.html')
 
-# def Farmer_create(request):
-#     if request.method == 'POST':
-#         form = FarmerForm(request.POST, request.FILES)
-#         if form.is_valid():
-#             form.save()
-#             return redirect('Farmer_list')
-#     else:
-#         form = FarmerForm()
-#     return render(request, 'products/Farmer_form.html', {'form': form})
 
-# def Farmer_edit(request, id):
-#     Farmer = get_object_or_404(Farmer, id=id)
-#     if request.method == 'POST':
-#         form = FarmerForm(request.POST, request.FILES, instance=Farmer)
-#         if form.is_valid():
-#             form.save()
-#             return redirect('Farmer_list')
-#     else:
-#         form = FarmerForm(instance=Farmer)
-#     return render(request, 'products/Farmer_form.html', {'form': form})
-
-# def Farmer_delete(request, id):
-#     Farmer = get_object_or_404(Farmer, id=id)
-#     if request.method == 'POST':
-#         Farmer.delete()
-#         return redirect('Farmer_list')
-#     return render(request, 'products/Farmer_confirm_delete.html', {'Farmer': Farmer})
-
-
-###farmer profile list end
-
-
-###farmer contact list start
-
-
-# def Farmer_create(request):
-#     if request.method == 'POST':
-#         form = FarmerForm(request.POST, request.FILES)
-#         if form.is_valid():
-#             form.save()
-#             return redirect('Farmer_list')
-#     else:
-#         form = FarmerForm()
-#     return render(request, 'products/Farmer_form.html', {'form': form})
-
-# def Farmer_edit(request, id):
-#     Farmer = get_object_or_404(Farmer, id=id)
-#     if request.method == 'POST':
-#         form = FarmerForm(request.POST, request.FILES, instance=Farmer)
-#         if form.is_valid():
-#             form.save()
-#             return redirect('Farmer_list')
-#     else:
-#         form = FarmerForm(instance=Farmer)
-#     return render(request, 'products/Farmer_form.html', {'form': form})
-
-# def Farmer_delete(request, id):
-#     Farmer = get_object_or_404(Farmer, id=id)
-#     if request.method == 'POST':
-#         Farmer.delete()
-#         return redirect('Farmer_list')
-#     return render(request, 'products/Farmer_confirm_delete.html', {'Farmer': Farmer})
-
-
-###farmer contat list end
 
 login_required
 def user_list(request):
@@ -908,4 +671,65 @@ def farmer_delete_contact(request, pk):
 # class ExampleSecretView(OTPRequiredMixin, TemplateView):
 #     template_name = 'secret.html'
 
+def is_admin(user):
+    return user.is_staff  # or customize for your admin logic
 
+
+@login_required(login_url='/admin/login/')  # only logged-in admins
+def blog_list(request):
+    print("Request User:", request.user)
+
+    # Get all posts (no filter)
+    posts = BlogPost.objects.all().order_by('-created_at')
+
+    print("Posts:", posts)
+    return render(request, 'blogs.html', {'posts': posts})
+
+#@login_required(login_url='/admin/login/')  # only logged-in admins
+def create_post(request):
+    # Check if logged-in user is a teacher
+    # if not hasattr(request.user, 'teacher'):
+    #     return HttpResponseForbidden("Only teachers can create posts.")
+
+    print("Request User:", request.user)
+    if request.method == 'POST':
+        form = BlogPostForm(request.POST, request.FILES)
+        if form.is_valid():
+            blog_post = form.save(commit=False)
+            blog_post.author = request.user
+            blog_post.save()
+            return redirect('/erp/blogs')
+    else:
+        form = BlogPostForm()
+    return render(request, 'blog_create.html', {'form': form})
+
+
+
+@login_required(login_url='/admin/login/')  # only logged-in admins
+@user_passes_test(is_admin)
+def approve_post(request, post_id):
+    # Get the post or 404 if it doesn't exist
+    post = get_object_or_404(BlogPost, id=post_id)
+    
+    # Update status to approved
+    post.status = 'approved'
+    post.save()
+
+    messages.success(request, f"Post '{post.title}' has been approved.")
+    return redirect('/erp/blogs')  # redirect to blog list or admin page    
+
+@login_required(login_url='/admin/login/')  # only logged-in admins
+@user_passes_test(is_admin)
+def toggle_post_status(request, post_id):
+    post = get_object_or_404(BlogPost, id=post_id)
+
+    # Toggle status
+    if post.status == 'approved':
+        post.status = 'pending'
+        #messages.success(request, f"Post '{post.title}' status changed to Pending.")
+    else:
+        post.status = 'approved'
+        #messages.success(request, f"Post '{post.title}' status changed to Approved.")
+
+    post.save()
+    return redirect('/erp/blogs')    

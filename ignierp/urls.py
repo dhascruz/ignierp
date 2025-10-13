@@ -28,6 +28,9 @@ from django.urls import include, path
 from two_factor.gateways.twilio.urls import urlpatterns as tf_twilio_urls
 from two_factor.urls import urlpatterns as tf_urls
 
+from django.conf import settings
+from django.conf.urls.static import static
+
 
 urlpatterns = [
  #   path('admin/', admin.site.urls),
@@ -43,9 +46,14 @@ urlpatterns = [
     path("courses/", include("users.course_urls")), # only HTML route
     path("teachers/", include("teachers.urls")), # only HTML route
     #path("api/teachers/", include("teachers.api_urls")), # only API route
+    path('blog/', include('blog.urls')),
+    #path('ckeditor/', include('ckeditor_uploader.urls')),
+
     
 
 ]
+
+
 
 # Add internationalization URL patterns
 # urlpatterns += i18n_patterns(
@@ -62,6 +70,8 @@ if settings.DEBUG:
         path('__debug__/', include(debug_toolbar.urls)),
     ]
 
+# if settings.DEBUG:
+#     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 
 # urlpatterns = [
