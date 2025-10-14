@@ -130,6 +130,27 @@ def courses_view(request):
         "courses": courses
     })
 
+
+@login_required(login_url='/erp/teachers/login/')
+def mycourses_view(request):
+    # Get Moodle session info (set at login)
+    userid = request.session.get("userid")
+    fullname = request.session.get("fullname")
+
+    # Extra safety: redirect if Moodle session info missing
+    if not userid:
+        return redirect("teacher_login")  # Django URL name for login page
+
+    # Fetch courses for this teacher
+    mycourses = get_teacher_courses_with_student_count(userid)
+    print("My Courses:", mycourses)
+
+    return render(request, "teachers/mycourses.html", {
+        "fullname": fullname,
+        "mycourses": mycourses
+    })
+
+
 @login_required
 def course_students_view(request, course_id):
     teacher_id = request.session.get("userid")

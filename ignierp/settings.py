@@ -104,7 +104,8 @@ INSTALLED_APPS = [
 ]
 
 
-MOODLE_BASE_URL = "https://staging.igniteict.com"
+#MOODLE_BASE_URL = "https://staging.igniteict.com"
+MOODLE_BASE_URL = "http://210.18.177.188/igni"
 MOODLE_WS_TOKEN = "f7b2275d40d76bc3478eae17a791026f"   
 
 
@@ -115,6 +116,7 @@ CSRF_TRUSTED_ORIGINS = [
     "https://my.alpho.net",
     "https://www.my.alpho.net",
     "https://210.18.177.188",
+    "http://210.18.177.188/igni",
 ]
 
 
@@ -229,7 +231,7 @@ STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 FORCE_SCRIPT_NAME = '/erp'
 USE_X_FORWARDED_HOST = True
 STATIC_URL = '/erp/static/'
-MEDIA_URL = '/erp/media/'
+
 
 #STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
@@ -299,6 +301,5 @@ CKEDITOR_CONFIGS = {
         'width': '100%',
     },
 }
-
 
 
