@@ -98,7 +98,7 @@ def get_teacher_courses_with_student_count(userid):
             "shortname": course_shortname,
             "student_count": student_count,
             "image_url": local_image_url,
-            #"course_url": moodle_course_url,
+            "course_url": moodle_course_url,
 
         })
 

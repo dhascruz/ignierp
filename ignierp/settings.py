@@ -18,6 +18,13 @@ from pathlib import Path
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 import os
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
+
+MOODLE_BASE_URL = os.getenv("MOODLE_BASE_URL")
+MOODLE_WS_TOKEN = os.getenv("MOODLE_WS_TOKEN")
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 
@@ -104,9 +111,9 @@ INSTALLED_APPS = [
 ]
 
 
-MOODLE_BASE_URL = "https://staging.igniteict.com"
-#MOODLE_BASE_URL = "http://210.18.177.188/igni"
-MOODLE_WS_TOKEN = "f7b2275d40d76bc3478eae17a791026f"   
+#MOODLE_BASE_URL = "https://staging.igniteict.com"
+# MOODLE_BASE_URL = "http://210.18.177.188/igni"
+# MOODLE_WS_TOKEN = "f7b2275d40d76bc3478eae17a791026f"   
 
 
 
