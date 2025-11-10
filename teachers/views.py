@@ -97,18 +97,26 @@ def teacher_logout(request):
 
 @login_required(login_url='/erp/teachers/login/')
 def dashboard_view(request):
+       # Get Moodle session info (set at login)
     userid = request.session.get("userid")
     fullname = request.session.get("fullname")
-    print("UserID:", userid, "Fullname:", fullname)
 
-    if not fullname:
-        return redirect("teacher_login")  # if not logged in, send back to login
-    
-    courses = get_teacher_courses_with_student_count(userid)
+    # Extra safety: redirect if Moodle session info missing
+    if not userid:
+        return redirect("teacher_login")  # Django URL name for login page
+
+    # Fetch courses for this teacher
+    mycourses_list = get_teacher_courses_with_student_count(userid)
+    print("My Courses:", mycourses_list)
+
+    # --- Pagination ---
+    paginator = Paginator(mycourses_list, 10)  # Show 10 courses per page
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)  # handles invalid page numbers automatically
 
     return render(request, "teachers/dashboard.html", {
-        "fullname": fullname,
-        "courses": courses
+         "mycourses": mycourses_list,
+        "page_obj": page_obj
     })
 
 
@@ -142,12 +150,17 @@ def mycourses_view(request):
         return redirect("teacher_login")  # Django URL name for login page
 
     # Fetch courses for this teacher
-    mycourses = get_teacher_courses_with_student_count(userid)
-    print("My Courses:", mycourses)
+    mycourses_list = get_teacher_courses_with_student_count(userid)
+    print("My Courses:", mycourses_list)
+
+    # --- Pagination ---
+    paginator = Paginator(mycourses_list, 10)  # Show 10 courses per page
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)  # handles invalid page numbers automatically
 
     return render(request, "teachers/mycourses.html", {
-        "fullname": fullname,
-        "mycourses": mycourses
+        "mycourses": mycourses_list,
+        "page_obj": page_obj
     })
 
 
