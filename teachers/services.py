@@ -69,6 +69,7 @@ def get_teacher_courses_with_student_count(userid):
         course_id, course_name, course_shortname, student_count, context_id, course_image = row
 
         local_image_url = None
+        moodle_course_url = None
         if course_image:
             # Build the full Moodle image URL
             moodle_image_url = f"{moodle_base_url}/{context_id}/course/overviewfiles/{course_image}"

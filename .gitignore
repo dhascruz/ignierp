@@ -1,0 +1,28 @@
+# 🧩 Environment & secrets
+.env
+*.env
+
+# 🐍 Python cache and compiled files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# 🧱 Django stuff
+db.sqlite3
+media/
+staticfiles/
+
+# 🧰 Virtual environments
+venv/
+env/
+.venv/
+.envrc
+
+# 🧱 IDE files
+.vscode/
+.idea/
+
+# 🐋 Docker
+*.log
+*.pid
