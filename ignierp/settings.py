@@ -104,8 +104,8 @@ INSTALLED_APPS = [
 ]
 
 
-#MOODLE_BASE_URL = "https://staging.igniteict.com"
-MOODLE_BASE_URL = "http://210.18.177.188/igni"
+MOODLE_BASE_URL = "https://staging.igniteict.com"
+#MOODLE_BASE_URL = "http://210.18.177.188/igni"
 MOODLE_WS_TOKEN = "f7b2275d40d76bc3478eae17a791026f"   
 
 

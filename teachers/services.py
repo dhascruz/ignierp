@@ -73,8 +73,10 @@ def get_teacher_courses_with_student_count(userid):
             # Build the full Moodle image URL
             moodle_image_url = f"{moodle_base_url}/{context_id}/course/overviewfiles/{course_image}"
             moodle_course_url = f"{moodle_base_url2}/course/view.php?id={course_id}"
+	        
 
             try:
+                print(moodle_course_url)
                 response = requests.get(moodle_image_url, timeout=10)
                 if response.status_code == 200:
                     # Save locally in MEDIA_ROOT/course_images/
@@ -96,7 +98,7 @@ def get_teacher_courses_with_student_count(userid):
             "shortname": course_shortname,
             "student_count": student_count,
             "image_url": local_image_url,
-            "course_url": moodle_course_url,
+            #"course_url": moodle_course_url,
 
         })
 
