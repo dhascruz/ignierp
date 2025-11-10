@@ -194,11 +194,11 @@ DATABASES = {
 
     'moodle': {
             'ENGINE': 'django.db.backends.mysql',     # Moodle usually runs on MySQL/MariaDB
-            'NAME': 'moodle_igni',                      # your Moodle database name
-            'USER': 'myadmin',                    # Moodle DB user
-            'PASSWORD': '453cur135',
-            'HOST': 'localhost',                      # or the DB server host
-            'PORT': '3306',
+            'NAME': os.getenv('MOODLE_DB_NAME'),
+            'USER': os.getenv('MOODLE_DB_USER'),
+            'PASSWORD': os.getenv('MOODLE_DB_PASSWORD'),
+            'HOST': os.getenv('MOODLE_DB_HOST', 'localhost'),
+            'PORT': os.getenv('MOODLE_DB_PORT', '3306'),
         }
     }
 
