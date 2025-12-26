@@ -3,16 +3,25 @@ from django.contrib.auth.decorators import login_required
 from rest_framework import status, viewsets
 from rest_framework.response import Response
 from django.shortcuts import render
+from django.contrib.auth.models import User
 
+from teachers.utils import check_moodle_password
 from users.services import get_cohort_counts, get_course_categories, get_course_teachers_students, get_courses_by_category, get_enrolled_users
 from .serializers import MoodleUserSerializer
 #from .services import moodle_user 
 from django.db.models import F
 from django.db.models import Q
 from .models import  *
+from teachers.models import TeacherMoodleUser   
 #from .utils import moodle_user
 from users.utils import run_course_backup
 from .services import get_users_with_roles
+
+from django.contrib.auth import authenticate, login
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.http import require_POST
+import json
 
 
 class MoodleUserViewSet(viewsets.ViewSet):
@@ -174,3 +183,197 @@ def trigger_backup(request, course_id):
         "output": output,
         "backups": backups
     })    
+
+
+
+@csrf_exempt
+@require_POST
+def api_teacher_login(request):
+    try:
+        data = json.loads(request.body)
+        username = data.get("username")
+        password = data.get("password")
+
+        print("Attempting login for user:", username)
+        print("Attempting login for user:", password)
+    
+
+        # user = authenticate(request, username=username, password=password)
+
+        user = TeacherMoodleUser.objects.using("moodle").get(username=username)
+
+        # return JsonResponse({
+        #     "success": True, 
+        #     "username": user,
+        #     "message": "Login successful"        })
+        #     # ✅ Verify password using your he  lper
+            
+
+        if check_moodle_password(password, user.password):
+            # ✅ Sync or create a Django User
+                django_user, created = User.objects.get_or_create(
+                    username=username,
+                    defaults={
+                        "first_name": user.firstname,
+                        "last_name": user.lastname,
+                        "email": getattr(user, "email", ""),
+                    }
+                )
+
+                # Optionally update name/email if Moodle data changed
+                if not created:
+                    django_user.first_name = user.firstname
+                    django_user.last_name = user.lastname
+                    django_user.email = getattr(user, "email", "")
+                    django_user.save()
+
+                # ✅ Log the Django user in
+                login(request, django_user)
+
+                # ✅ (Optional) Store Moodle info in session
+                request.session["userid"] = user.id
+                request.session["fullname"] = f"{user.firstname} {user.lastname}"
+
+                return JsonResponse({
+                "success": True,
+                "username": username,
+                "password": password,
+                "message": "valid credentials"
+             }, status=200)
+
+        else:
+            return JsonResponse({
+                "success": False,
+                "username": username,
+                "password": password,
+                "message": "Invalid credentials"
+             }, status=401)
+
+    except Exception as e:
+        return JsonResponse({
+            "success": False,
+            "message": str(e)
+        }, status=400)
+
+
+
+
+@csrf_exempt
+@require_POST
+def api_teacher_login(request):
+    try:
+        data = json.loads(request.body)
+        username = data.get("username")
+        password = data.get("password")
+
+        print("Attempting login for user:", username)
+        print("Attempting login for user:", password)
+    
+
+        # user = authenticate(request, username=username, password=password)
+
+        user = TeacherMoodleUser.objects.using("moodle").get(username=username)
+
+        # return JsonResponse({
+        #     "success": True, 
+        #     "username": user,
+        #     "message": "Login successful"        })
+        #     # ✅ Verify password using your he  lper
+            
+
+        if check_moodle_password(password, user.password):
+            # ✅ Sync or create a Django User
+                django_user, created = User.objects.get_or_create(
+                    username=username,
+                    defaults={
+                        "first_name": user.firstname,
+                        "last_name": user.lastname,
+                        "email": getattr(user, "email", ""),
+                    }
+                )
+
+                # Optionally update name/email if Moodle data changed
+                if not created:
+                    django_user.first_name = user.firstname
+                    django_user.last_name = user.lastname
+                    django_user.email = getattr(user, "email", "")
+                    django_user.save()
+
+                # ✅ Log the Django user in
+                login(request, django_user)
+
+                # ✅ (Optional) Store Moodle info in session
+                request.session["userid"] = user.id
+                request.session["fullname"] = f"{user.firstname} {user.lastname}"
+
+                return JsonResponse({
+                "success": True,
+                "username": username,
+                "password": password,
+                "message": "valid credentials"
+             }, status=200)
+
+        else:
+            return JsonResponse({
+                "success": False,
+                "username": username,
+                "password": password,
+                "message": "Invalid credentials"
+             }, status=401)
+
+    except Exception as e:
+        return JsonResponse({
+            "success": False,
+            "message": str(e)
+        }, status=400)
+
+
+
+@csrf_exempt
+@require_POST
+def api_admin_login(request):
+    try:
+        data = json.loads(request.body)
+        username = data.get("username")
+        password = data.get("password")
+
+        if not username or not password:
+            return JsonResponse({
+                "success": False,
+                "message": "Username and password required"
+            }, status=400)
+
+        print("Admin login attempt:", username)
+
+        user = authenticate(request, username=username, password=password)
+
+        
+        # ❌ Invalid credentials
+        if user is None:
+            return JsonResponse({
+                "success": False,
+                "message": "Invalid username or password"
+            }, status=401)
+
+        # ❌ Not an admin
+        if not (user.is_staff or user.is_superuser):
+            return JsonResponse({
+                "success": False,
+                "message": "Not authorized as admin"
+            }, status=403)
+
+        # ✅ Login success
+        login(request, user)
+
+        return JsonResponse({
+            "success": True,
+            "username": user.username,
+            "message": "Admin login successful",
+            "redirect_url": "/erp/admin/dashboard/"
+        }, status=200)
+
+    except Exception as e:
+        return JsonResponse({
+            "success": False,
+            "message": str(e)
+        }, status=400)
