@@ -1,5 +1,4 @@
 # 🧩 Environment & secrets
-.env
 *.env
 
 # 🐍 Python cache and compiled files
@@ -7,6 +6,8 @@ __pycache__/
 *.pyc
 *.pyo
 *.pyd
+*.py[cod]
+*$py.class
 
 # 🧱 Django stuff
 db.sqlite3
@@ -20,9 +21,10 @@ env/
 .envrc
 
 # 🧱 IDE files
-.vscode/
 .idea/
 
 # 🐋 Docker
 *.log
 *.pid
+config.bat
+node_modules
